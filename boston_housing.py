@@ -24,7 +24,7 @@
 # 
 # 运行下面区域的代码以载入波士顿房屋数据集，以及一些此项目所需的Python库。如果成功返回数据集的大小，表示数据集已载入成功。
 
-# In[5]:
+# In[1]:
 
 
 # 载入此项目所需要的库
@@ -41,7 +41,7 @@ if version_info.major != 2 and version_info.minor != 7:
 get_ipython().magic(u'matplotlib inline')
 
 
-# In[6]:
+# In[2]:
 
 
 # 载入波士顿房屋的数据集
@@ -69,7 +69,7 @@ print "Boston housing dataset has {} data points with {} variables each.".format
 # - 计算`prices`中的`'MEDV'`的最小值、最大值、均值、中值和标准差；
 # - 将运算结果储存在相应的变量中。
 
-# In[7]:
+# In[3]:
 
 
 #TODO 1
@@ -123,7 +123,7 @@ print "Standard deviation of prices: ${:,.2f}".format(std_price)
 #   - 分割比例为：80%的数据用于训练，20%用于测试；
 #   - 选定一个数值以设定 `train_test_split` 中的 `random_state` ，这会确保结果的一致性；
 
-# In[8]:
+# In[4]:
 
 
 # TODO 2
@@ -162,7 +162,7 @@ X_train, X_test, y_train, y_test = train_test_split(features, prices, test_size=
 # 
 # - (可选) 不使用任何外部库，参考[决定系数的定义](https://en.wikipedia.org/wiki/Coefficient_of_determination)进行计算，这也可以帮助你更好的理解决定系数在什么情况下等于0或等于1。
 
-# In[9]:
+# In[5]:
 
 
 # TODO 3
@@ -178,7 +178,7 @@ def performance_metric(y_true, y_predict):
     return score
 
 
-# In[10]:
+# In[6]:
 
 
 # TODO 3 可选
@@ -208,7 +208,7 @@ def performance_metric2(y_true, y_predict):
 # 
 # **提示**：运行下方的代码，使用`performance_metric`函数来计算模型的决定系数。
 
-# In[11]:
+# In[7]:
 
 
 # 计算这个模型的预测结果的决定系数
@@ -229,7 +229,7 @@ print "Model has a coefficient of determination, R^2, of {:.3f}.".format(score)
 # 
 # 运行下方区域中的代码，并利用输出的图形回答下面的问题。
 
-# In[12]:
+# In[8]:
 
 
 # 根据不同的训练集大小，和最大深度，生成学习曲线
@@ -243,14 +243,17 @@ vs.ModelLearning(X_train, y_train)
 
 # ### 问题 4 - 回答:
 # 
-# 右上角的图形，其最大深度是3。随着训练数据量的增加，训练集曲线的评分在不断下降，验证集曲线的评分在不断上升；并且训练集曲线和验证集曲线的评分，随着训练数据量的增加在不断接近。如果有更多的训练数据，两个评分会趋于稳定，且它们的差距收敛为特定值，也就说明模型已尽其所能地了解数据。所以，更多的训练数据可以提升模型的表现。
+# 最大深度为3的图：
+# 1. 随着训练数据量的增加，训练曲线分数先下级然后保持平稳
+# 2. 测试曲线分数随训练样量增加而提高，最后也趋于平稳
+# 3. 增加训练量并不能有效的提升模型的表现，因为到训练点三百以后，曲线收敛到0.8左右，这时学习器的拟合能力已经很强了，再增加训练数据，可能会让学习器学到训练数据本身的非全局特性，发生过拟合。
 
 # ### 复杂度曲线
 # 下列代码内的区域会输出一幅图像，它展示了一个已经经过训练和验证的决策树模型在不同最大深度条件下的表现。这个图形将包含两条曲线，一个是训练集的变化，一个是验证集的变化。跟**学习曲线**相似，阴影区域代表该曲线的不确定性，模型训练和测试部分的评分都用的 `performance_metric` 函数。
 # 
 # 运行下方区域中的代码，并利用输出的图形并回答下面的两个问题。
 
-# In[13]:
+# In[9]:
 
 
 # 根据不同的最大深度参数，生成复杂度曲线
@@ -282,7 +285,18 @@ vs.ModelComplexity(X_train, y_train)
 
 # ### 问题 7 - 回答:
 #  
-# 网格搜索算法是一种通过遍历给定的参数组合来优化模型表现的方法。根据给定的模型自动进行交叉验证，通过调节每一个参数来跟踪评分结果。最终得出参数组合在各种情况下的得分，得分最高的即为模型的最优参数组合。
+# 网格搜索：由参数param_grid预先设置好参数网格生成参数组合，将所有可能的组合均用数据集拟合，保留最佳组合。
+# 例如 
+# 
+#     pipeline = Pipeline([("features", combined_features), ("svm", svm)])
+# 
+#     param_grid = dict(features__pca__n_components=[1, 2, 3],
+#                   features__univ_select__k=[1, 2],
+#                   svm__C=[0.1, 1, 10])
+# 
+#     grid_search = GridSearchCV(pipeline, param_grid=param_grid, verbose=10)
+#     grid_search.fit(X, y)
+#  它会将所有可能的的n_components，K，C值组合都与数据集拟合，如何根据scoring（如为指定为socre）函数的得分最高组合。
 
 # ### 问题 8 - 交叉验证
 # - 什么是K折交叉验证法（k-fold cross-validation）？
@@ -312,7 +326,7 @@ vs.ModelComplexity(X_train, y_train)
 #   
 # 如果你对python函数的默认参数定义和传递不熟悉，可以参考这个MIT课程的[视频](http://cn-static.udacity.com/mlnd/videos/MIT600XXT114-V004200_DTH.mp4)。
 
-# In[14]:
+# In[10]:
 
 
 # TODO 4
@@ -354,7 +368,7 @@ def fit_model(X, y):
 # - 计算当前模型的交叉验证分数
 # - 返回最优交叉验证分数对应的模型
 
-# In[15]:
+# In[11]:
 
 
 # TODO 4 可选
@@ -384,7 +398,7 @@ def fit_model2(X, y):
 # 
 # 运行下方区域内的代码，将决策树回归函数代入训练数据的集合，以得到最优化的模型。
 
-# In[16]:
+# In[12]:
 
 
 # 基于训练数据，获得最优模型
@@ -416,7 +430,7 @@ print "Parameter 'max_depth' is {} for the optimal model.".format(optimal_reg.ge
 # 
 # 运行下列的代码区域，使用你优化的模型来为每位客户的房屋价值做出预测。
 
-# In[17]:
+# In[13]:
 
 
 # 生成三个客户的数据
@@ -439,7 +453,7 @@ for i, price in enumerate(predicted_price):
 # ### 编程练习 5
 # 你刚刚预测了三个客户的房子的售价。在这个练习中，你将用你的最优模型在整个测试数据上进行预测, 并计算相对于目标变量的决定系数 R<sup>2</sup>的值**。
 
-# In[18]:
+# In[14]:
 
 
 #TODO 5
@@ -472,7 +486,7 @@ print "Optimal model has R^2 score {:,.2f} on test data".format(r2)
 # 
 # **提示**: 执行下方区域中的代码，采用不同的训练和测试集执行 `fit_model` 函数10次。注意观察对一个特定的客户来说，预测是如何随训练数据的变化而变化的。
 
-# In[19]:
+# In[15]:
 
 
 # 请先注释掉 fit_model 函数里的所有 print 语句
@@ -519,7 +533,7 @@ vs.PredictTrials(features, prices, fit_model, client_data)
 # 
 # 你可以参考上面学到的内容，拿这个数据集来练习数据分割与重排、定义衡量标准、训练模型、评价模型表现、使用网格搜索配合交叉验证对参数进行调优并选出最佳参数，比较两者的差别，最终得出最佳模型对验证集的预测分数。
 
-# In[20]:
+# In[16]:
 
 
 # TODO 6
